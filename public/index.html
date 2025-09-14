@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Kundalik Schedule</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-gray-100 text-gray-800 flex items-center justify-center min-h-screen">
+    <div class="max-w-md w-full bg-white shadow-lg rounded-2xl p-6">
+        <h1 class="text-2xl font-bold text-center mb-6">📚 Kundalik Schedule</h1>
+
+        <div id="schedule" class="space-y-6 text-center">
+            <div id="tomorrow" class="p-4 rounded-xl bg-blue-50 shadow">
+                <h2 class="text-xl font-semibold text-blue-600">Tomorrow</h2>
+                <p class="text-sm text-gray-500" id="tomorrow-date"></p>
+                <ul id="tomorrow-list" class="mt-2 space-y-1 text-gray-700"></ul>
+            </div>
+
+            <div id="today" class="p-4 rounded-xl bg-gray-50 shadow">
+                <h2 class="text-xl font-semibold text-gray-600">Today</h2>
+                <p class="text-sm text-gray-500" id="today-date"></p>
+                <ul id="today-list" class="mt-2 space-y-1 text-gray-700"></ul>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        async function loadSchedule() {
+            try {
+                const res = await fetch("/schedule?key=supersecretkey"); // change if needed
+                const data = await res.json();
+
+                // Today
+                document.getElementById("today-date").textContent = data.today.date;
+                document.getElementById("today-list").innerHTML =
+                    data.today.subjects.length
+                        ? data.today.subjects.map(s => `<li>📘 ${s}</li>`).join("")
+                        : "<li>No lessons</li>";
+
+                // Tomorrow
+                document.getElementById("tomorrow-date").textContent = data.tomorrow.date;
+                document.getElementById("tomorrow-list").innerHTML =
+                    data.tomorrow.subjects.length
+                        ? data.tomorrow.subjects.map(s => `<li>📖 ${s}</li>`).join("")
+                        : "<li>No lessons</li>";
+            } catch (err) {
+                document.getElementById("schedule").innerHTML =
+                    "<p class='text-red-500'>Failed to load schedule.</p>";
+                console.error(err);
+            }
+        }
+
+        loadSchedule();
+    </script>
+</body>
+
+</html>
